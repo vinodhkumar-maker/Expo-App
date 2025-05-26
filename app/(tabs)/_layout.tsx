@@ -45,10 +45,6 @@ export default function TabLayout() {
           headerStyle: {
             backgroundColor: Colors[colorScheme ?? 'light'].background,
           },
-          // header: () => <View className="flex-row items-center justify-center h-16">
-          //   <IconSymbol size={28} name="house.fill" color={Colors[colorScheme ?? 'light'].text} />
-          //   <Text>Vinodh</Text>
-          // </View>
         }}
       />
       <Tabs.Screen

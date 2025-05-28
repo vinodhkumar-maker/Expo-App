@@ -1,8 +1,9 @@
+import { useSubmitUser } from '@/hooks/useQueryFn';
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useRouter } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
-import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type FormData = {
     name: string;
@@ -18,26 +19,36 @@ const LoginScreen = () => {
     }
     const {
         control,
+        reset,
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>();
 
+    const { mutate: mutation } = useSubmitUser();
+
     const onSubmit = (data: FormData) => {
-        const isValid = data.name === userData.name && data.password === userData.password;
+        mutation(
+            { name: data.name, password: data.password },
+            {
+                onSuccess: (response: any) => {
+                    console.log('User created successfully:', response);
+                    const isValidUser = data.name === userData.name && data.password === userData.password;
 
-        if (isValid) {
-            Alert.alert(
-                'Login Successful',
-                `Welcome, ${data.name}!`,
+                    if (isValidUser) {
+                        console.log('Login successful:', data);
+                        router.push('/(tabs)');
+                    } else {
+                        alert('Invalid credentials. Please try again.');
+                    }
+                    reset();
+                },
+                onError: (error: any) => {
+                    alert('An error occurred while logging in. Please try again.');
+                },
+            },
 
-            );
 
-            router.replace('/(tabs)');
-        } else {
-            Alert.alert(
-                'Login Failed',
-                'Invalid name or password. Please try again.',)
-        }
+        );
     };
 
     return (
